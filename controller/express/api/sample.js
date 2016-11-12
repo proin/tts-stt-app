@@ -1,3 +1,5 @@
+'use strict';
+
 var express = require("express");
 var router = express.Router();
 
@@ -17,7 +19,7 @@ router.get("/", function (req, res) {
             resolve({read: read});
         }))
         .then('readme', (args)=> new Promise((resolve)=> {
-            let {read, index} = args;
+            let read = args.read;
             read = entities.decodeHTML(read);
             read = read.replace(/[^(가-힣ㄱ-ㅎㅏ-ㅣa-zA-Z0-9.)]/gi, ' ');
 
