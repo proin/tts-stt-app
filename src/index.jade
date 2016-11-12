@@ -1,0 +1,31 @@
+doctype html
+html(ng-app="app")
+    head
+        include components/jade/header
+        script(src="{$ROOT}/view/js/index.js")
+        link(rel="stylesheet", href="{$ROOT}/view/css/index.css")
+
+    body(ng-controller='ctrl')
+        md-button.md-raised.md-primary(aria-label='Speak', ng-click='stt()') {{status.stt ? 'STOP' : 'START'}}
+        md-button.md-raised.md-primary(aria-label='Speak', ng-click='tts()', ng-if='status.stt') TTS
+        md-button.md-raised.md-primary(aria-label='Speak', ng-if='status.stt') {{status.wait}}ms
+
+        div(ng-cloak='', layout-gt-sm='row', layout='column')
+            div(flex-gt-sm='50', flex='')
+                md-toolbar.md-hue-3(layout='row')
+                    .md-toolbar-tools
+                        span TTS
+                md-content
+                    md-list(flex='')
+                        md-list-item(ng-repeat='text in ttslist track by $index')
+                            p {{text}}
+            div(flex-gt-sm='50', flex='')
+                md-toolbar.md-hue-3(layout='row')
+                    .md-toolbar-tools
+                        span STT
+                md-content
+                    md-list(flex='')
+                        md-list-item(ng-repeat='text in sttlist track by $index')
+                            p {{text}}
+                        md-list-item
+                            p {{transcript}}

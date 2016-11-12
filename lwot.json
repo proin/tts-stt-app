@@ -1,0 +1,12 @@
+{
+    "name": "tts-stt",
+    "version": "0.0.0",
+    "private": true,
+    "authors": "proin",
+    "description": "System TTS & Chrome STT API",
+    "dependencies": {
+        "platform": {
+            "express": "https://github.com/searble/lwot-platform-express"
+        }
+    }
+}
