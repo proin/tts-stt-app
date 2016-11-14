@@ -25,7 +25,8 @@ html(ng-app="app")
                         span STT
                 md-content
                     md-list(flex='')
-                        md-list-item(ng-repeat='text in sttlist track by $index')
-                            p {{text}}
                         md-list-item
-                            p {{transcript}}
+                            p(ng-if='transcript.time') [{{transcript.time.start}} - {{transcript.time.end}}] {{transcript.text}}
+                            p(ng-if='!transcript.time && status.stt') Ready to listening ...
+                        md-list-item(ng-repeat='text in sttlist track by $index')
+                            p [{{text.time.start}} - {{text.time.end}}] {{text.text}}

@@ -2,15 +2,22 @@ app.controller("ctrl", function ($scope, $timeout) {
     $scope.sttlist = [];
     $scope.ttslist = [];
 
+    $scope.time = {};
+
     $scope.status = {};
     $scope.status.stt = false;
+
+    var MAX_WAITING_TIME = 5000;
 
     var recognizing = false;
 
     var recognition = new webkitSpeechRecognition();
-    recognition.continuous = true;
+    console.log(recognition);
+    recognition.continuous = false;
     recognition.interimResults = true;
-    recognition.lang = 'ko-KR';
+    // recognition.lang = 'ko-KR';
+    recognition.lang = 'en-US';
+    recognition.maxAlternatives = 2;
 
     var stt = {};
     stt.start = function () {
@@ -27,14 +34,24 @@ app.controller("ctrl", function ($scope, $timeout) {
     setInterval(function () {
         if ($scope.status.stt) {
             $scope.status.wait = new Date().getTime() - $scope.lastTime;
-            if ($scope.status.wait > 15000)
+            if ($scope.status.wait > MAX_WAITING_TIME) {
                 stt.stop();
+            }
         }
 
         $timeout();
     }, 1000);
 
+    recognition.onaudiostart = function (event) {
+        $scope.lastTime = new Date().getTime();
+    };
+
+    recognition.onspeechstart = function (event) {
+        $scope.lastTime = new Date().getTime();
+    };
+
     recognition.onstart = function () {
+        $scope.time.start = new Date();
         recognizing = true;
     };
 
@@ -59,13 +76,15 @@ app.controller("ctrl", function ($scope, $timeout) {
                 transcript += event.results[i][0].transcript;
             }
 
+        $scope.time.end = new Date();
+
         if (finalized) {
-            $scope.transcript = '';
+            $scope.transcript = {};
             $scope.final_transcript = final_transcript;
-            $scope.sttlist.push($scope.final_transcript);
+            $scope.sttlist.unshift({time: {start: $scope.time.start.format('HH:mm:ss'), end: $scope.time.end.format('HH:mm:ss')}, text: $scope.final_transcript});
             stt.stop();
         } else {
-            $scope.transcript = transcript;
+            $scope.transcript = {time: {start: $scope.time.start.format('HH:mm:ss'), end: $scope.time.end.format('HH:mm:ss')}, text: transcript};
         }
 
         $timeout();
@@ -73,7 +92,7 @@ app.controller("ctrl", function ($scope, $timeout) {
 
     $scope.tts = function () {
         $.get("/api/sample", function (data) {
-            $scope.ttslist.push(data.data);
+            $scope.ttslist.unshift(data.data);
             $timeout();
         });
     };
